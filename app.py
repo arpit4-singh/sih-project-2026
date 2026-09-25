@@ -670,41 +670,96 @@ elif navigation == "🎥 Video & Automated AI Pipeline":
         except Exception:
             shutil.copy2(temp_file, current_video_file)
 
-    uploaded_video = st.file_uploader(
-        "Upload Bus / Road Video Stream (MP4, MOV, AVI) — Multi-hazard AI sensing automatically triggers upon upload",
-        type=["mp4", "mov", "avi", "mkv"],
-        help="Upload any dashcam or transit video. Edge AI analyzes potholes, water hazards, traffic, pedestrians, plates, sanitation, and signals automatically."
-    )
+    upload_tab1, upload_tab2 = st.tabs([
+        "📁 Direct Local Video File / Presets (Zero Upload Delay)",
+        "📤 Browser Drag & Drop Upload"
+    ])
 
-    # Auto-trigger detection as soon as a file is uploaded
-    if uploaded_video is not None:
-        file_sig = f"{uploaded_video.name}_{uploaded_video.size}_{active_corridor}"
-        if st.session_state.get("last_processed_sig") != file_sig:
-            st.info(f"⚡ New Video Stream Detected: **{uploaded_video.name}** ({uploaded_video.size / (1024*1024):.1f} MB) — Encoding for Instant Web Playback...")
-            
-            raw_temp = UPLOAD_DIR / "raw_incoming_stream.mp4"
-            with open(raw_temp, "wb") as f:
-                f.write(uploaded_video.read())
+    new_video_to_process = None
 
-            prog_bar = st.progress(5)
-            status_text = st.empty()
-            status_text.markdown("<b>⚡ Transcoding Stream to Universal Web H.264...</b>", unsafe_allow_html=True)
-            
-            try:
-                cmd = ["ffmpeg", "-y", "-i", str(raw_temp), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "24", "-c:a", "aac", "-movflags", "+faststart", str(current_video_file)]
-                subprocess.run(cmd, capture_output=True, timeout=40)
-            except Exception:
-                shutil.copy2(raw_temp, current_video_file)
+    with upload_tab1:
+        st.markdown("""
+        <div style="background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 10px; padding: 12px 16px; margin-bottom: 14px; font-size: 0.85rem; color: #cbd5e1;">
+            💡 <b>Fastest Method:</b> Badi video files (100MB+) ko browser me upload karne me time lag sakta hai. Laptop me saved video ko bina kisi delay ke seedha load karne ke liye niche se select karein ya path paste karein.
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Discover existing local video files in project
+        discovered_vids = {}
+        for p in [BASE_DIR, UPLOAD_DIR, BASE_DIR / "output"]:
+            if p.exists():
+                for vf in p.glob("*.mp4"):
+                    sz_mb = vf.stat().st_size / (1024 * 1024)
+                    discovered_vids[str(vf)] = f"🎥 {vf.name} ({sz_mb:.1f} MB)"
 
-            def on_prog(pct, msg):
-                prog_bar.progress(pct)
-                status_text.markdown(f"<b>{msg}</b>", unsafe_allow_html=True)
+        col_loc1, col_loc2 = st.columns([3, 1])
+        with col_loc1:
+            selected_preset = st.selectbox(
+                "Select Existing Video Stream from System:",
+                options=list(discovered_vids.keys()),
+                format_func=lambda k: discovered_vids.get(k, k),
+                help="Pick any pre-existing transit recording or test video."
+            )
+            custom_path = st.text_input(
+                "Or Enter Full Path to Any Local Video File:",
+                placeholder="e.g. C:\\Users\\sniti\\Videos\\traffic_sample.mp4",
+                help="You can paste the absolute path to any MP4/MOV/AVI video on your computer."
+            )
+        with col_loc2:
+            st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+            if st.button("⚡ Load & Process Video", key="btn_load_local_stream", use_container_width=True):
+                target_p = Path(custom_path.strip('"').strip("'")) if custom_path.strip() else Path(selected_preset)
+                if target_p.exists() and target_p.is_file():
+                    new_video_to_process = target_p
+                else:
+                    st.error(f"File not found: {target_p}")
 
-            res = run_master_pipeline(current_video_file, corridor_key=active_corridor, progress_callback=on_prog)
-            st.session_state["last_processed_sig"] = file_sig
-            st.session_state["last_res"] = res
-            st.cache_data.clear()
-            st.rerun()
+    with upload_tab2:
+        st.caption("Upload through browser uploader (Supports up to 2GB files on Localhost):")
+        uploaded_video = st.file_uploader(
+            "Upload Bus / Road Video Stream (MP4, MOV, AVI) — Multi-hazard AI sensing triggers automatically",
+            type=["mp4", "mov", "avi", "mkv"],
+            help="Upload any dashcam or transit video. Edge AI analyzes hazards automatically."
+        )
+        st.markdown("""
+        <div style="color: #94a3b8; font-size: 0.78rem; margin-top: 4px;">
+            ℹ️ <b>Note:</b> Localhost (`http://localhost:8501`) upload me internet data bilkul use nahi hota. Agar upload 'Uploading...' par ruk jaye, to page ko <b>Ctrl + F5</b> karke refresh karein ya upar 'Direct Local Video File' tab use karein.
+        </div>
+        """, unsafe_allow_html=True)
+
+        if uploaded_video is not None:
+            file_sig = f"{uploaded_video.name}_{uploaded_video.size}_{active_corridor}"
+            if st.session_state.get("last_processed_sig") != file_sig:
+                raw_temp = UPLOAD_DIR / "raw_incoming_stream.mp4"
+                with st.spinner(f"Writing incoming stream {uploaded_video.name} to disk..."):
+                    uploaded_video.seek(0)
+                    with open(raw_temp, "wb") as f:
+                        shutil.copyfileobj(uploaded_video, f, length=2*1024*1024)
+                new_video_to_process = raw_temp
+                st.session_state["last_processed_sig"] = file_sig
+
+    # Auto-trigger detection when a new video is selected or uploaded
+    if new_video_to_process is not None:
+        st.info(f"⚡ Processing New Stream: **{new_video_to_process.name}** ({new_video_to_process.stat().st_size / (1024*1024):.1f} MB)...")
+        
+        prog_bar = st.progress(5)
+        status_text = st.empty()
+        status_text.markdown("<b>⚡ Optimizing Video Encoding for Universal Web Player...</b>", unsafe_allow_html=True)
+        
+        try:
+            cmd = ["ffmpeg", "-y", "-i", str(new_video_to_process), "-c:v", "libx264", "-preset", "ultrafast", "-crf", "24", "-c:a", "aac", "-movflags", "+faststart", str(current_video_file)]
+            subprocess.run(cmd, capture_output=True, timeout=90)
+        except Exception:
+            shutil.copy2(new_video_to_process, current_video_file)
+
+        def on_prog(pct, msg):
+            prog_bar.progress(pct)
+            status_text.markdown(f"<b>{msg}</b>", unsafe_allow_html=True)
+
+        res = run_master_pipeline(current_video_file, corridor_key=active_corridor, progress_callback=on_prog)
+        st.session_state["last_res"] = res
+        st.cache_data.clear()
+        st.rerun()
 
     # ALWAYS display active video player if stream exists
     if current_video_file.exists():
