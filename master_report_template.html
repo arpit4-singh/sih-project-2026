@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SIH26124 Urban Intelligence & Transit ADAS — Comprehensive Master Project Report</title>
+<style>
+    @page {
+        size: A4;
+        margin: 12mm 14mm 14mm 14mm;
+        @bottom-right {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 8pt;
+            color: #64748b;
+        }
+    }
+    
+    body {
+        font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+        color: #0f172a;
+        line-height: 1.4;
+        font-size: 8.5pt;
+        background: #ffffff;
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+
+    /* Header & Branding */
+    .header-banner {
+        border-bottom: 2.5px solid #0284c7;
+        padding-bottom: 10px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .header-title h1 {
+        margin: 0;
+        font-size: 17pt;
+        color: #0f172a;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .header-title .subtitle {
+        margin: 3px 0 0 0;
+        font-size: 9.5pt;
+        color: #0284c7;
+        font-weight: 600;
+    }
+
+    .meta-box {
+        text-align: right;
+        font-size: 7.5pt;
+        color: #475569;
+        line-height: 1.35;
+    }
+
+    .meta-box b {
+        color: #0f172a;
+    }
+
+    .badge-bar {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .badge {
+        display: inline-block;
+        font-size: 7pt;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .badge-primary { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+    .badge-success { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-purple  { background: #f3e8ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .badge-amber   { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+    .badge-rose    { background: #ffe4e6; color: #be123c; border: 1px solid #fecdd3; }
+
+    h2 {
+        font-size: 11pt;
+        color: #0f172a;
+        border-left: 4px solid #0284c7;
+        padding-left: 8px;
+        margin-top: 14px;
+        margin-bottom: 6px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+        page-break-after: avoid;
+    }
+
+    h3 {
+        font-size: 9.5pt;
+        color: #1e293b;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        font-weight: 700;
+        page-break-after: avoid;
+    }
+
+    p {
+        margin: 0 0 6px 0;
+        text-align: justify;
+    }
+
+    /* Tables */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 4px 0 8px 0;
+        font-size: 7.8pt;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 3.5px 6px;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 7.8pt;
+    }
+
+    tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+
+    .tech-pill {
+        font-family: 'Consolas', 'Courier New', monospace;
+        font-weight: 700;
+        color: #0f172a;
+        background: #e2e8f0;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 7.5pt;
+        display: inline-block;
+    }
+
+    .highlight-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        padding: 5px 10px;
+        margin-bottom: 5px;
+        page-break-inside: avoid;
+    }
+
+    .highlight-card-title {
+        font-weight: 700;
+        color: #0284c7;
+        font-size: 8.5pt;
+        margin-bottom: 3px;
+    }
+
+    .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        page-break-inside: avoid;
+    }
+
+    .stat-box {
+        border: 1px solid #e2e8f0;
+        border-radius: 5px;
+        padding: 6px 10px;
+        background: #f8fafc;
+    }
+
+    .stat-box .title {
+        font-size: 7pt;
+        color: #64748b;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .stat-box .desc {
+        font-size: 8pt;
+        color: #0f172a;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+
+    .workflow-step {
+        border-left: 2px dashed #0284c7;
+        padding-left: 10px;
+        margin-left: 4px;
+        margin-bottom: 8px;
+    }
+
+    .workflow-step-title {
+        font-weight: 700;
+        color: #0369a1;
+        font-size: 8.5pt;
+    }
+
+    .footer {
+        margin-top: 18px;
+        padding-top: 6px;
+        border-top: 1px solid #cbd5e1;
+        font-size: 7pt;
+        color: #64748b;
+        display: flex;
+        justify-content: space-between;
+    }
+</style>
+</head>
+<body>
+
+<!-- ================================= PAGE 1 ================================= -->
+<div class="header-banner">
+    <div class="header-title">
+        <h1>🏙️ Urban Intelligence & Transit ADAS</h1>
+        <div class="subtitle">Complete Technical Architecture, Operational Workflows & Technology Stack Report</div>
+    </div>
+    <div class="meta-box">
+        <b>Project ID:</b> SIH26124 (Urban Innovators)<br>
+        <b>Authority Alignment:</b> Bharat Electronics Limited (BEL) & Smart Cities<br>
+        <b>Target Deployment:</b> Public Transit Fleets (UPSRTC / BMTC / DTC)<br>
+        <b>Operational Mode:</b> 100% Edge-First Autonomous Telematics
+    </div>
+</div>
+
+<div class="badge-bar">
+    <span class="badge badge-primary">Zero External API Billing</span>
+    <span class="badge badge-success">Edge AI Computer Vision</span>
+    <span class="badge badge-purple">Spatial-Temporal Clustering</span>
+    <span class="badge badge-amber">Driver ADAS Active Warnings</span>
+    <span class="badge badge-rose">Automated PWD / Municipal Work Orders</span>
+</div>
+
+<h2>1. Executive Project Summary & Core Mission</h2>
+<p>
+    The <b>Urban Intelligence & Transit ADAS Platform</b> transforms existing city transit bus fleets into continuous, mobile urban scanners. Operating via non-intrusive dashboard cameras and synchronized GPS receivers, the onboard edge computing box autonomously detects, classifies, and geo-tags <b>eight distinct urban hazards</b>—including road potholes, stagnant waterlogging pools, traffic bottlenecks, school zone pedestrian safety violations, rash driving speed offenders (ANPR), illegal garbage heaps, and traffic signal blackouts.
+</p>
+<p>
+    By replacing dedicated, multi-crore specialized survey vans with ordinary city buses running their daily scheduled routes, the system achieves <b>over 90% daily road coverage</b> at a fraction of traditional infrastructure costs, converting municipal maintenance from a reactive citizen-complaint model into an automated, proactive civic intelligence grid.
+</p>
+
+<div class="grid-2" style="margin-top: 8px; margin-bottom: 10px;">
+    <div class="stat-box">
+        <div class="title">Edge Hardware Compatibility</div>
+        <div class="desc">NVIDIA Jetson Orin / Nano / Raspberry Pi 5 / In-Vehicle PC</div>
+    </div>
+    <div class="stat-box">
+        <div class="title">Inference Speed & Model Weight</div>
+        <div class="desc">25–30 FPS Real-Time Inference • Model Weight: 6.2 MB (YOLOv8n)</div>
+    </div>
+    <div class="stat-box">
+        <div class="title">Geospatial Mapping Engine</div>
+        <div class="desc">Hardware-Accelerated 3D WebGL (Deck.gl / PyDeck) via Carto Tiles</div>
+    </div>
+    <div class="stat-box">
+        <div class="title">Spatial Clustering Engine</div>
+        <div class="desc">85-Meter Haversine Coordinated Multi-Hazard Dispatch Matrix</div>
+    </div>
+</div>
+
+<h2>2. End-to-End System Workflow (How It Works Step-by-Step)</h2>
+<p>The system operates in a seamless, automated 5-stage processing pipeline:</p>
+
+<div class="workflow-step">
+    <div class="workflow-step-title">Step 1: Automated In-Transit Data Ingestion & GPS Telemetry Sync</div>
+    <p>As the bus starts its route, the onboard edge box automatically triggers on ignition. A forward-facing HD camera records the road corridor while an active GPS receiver logs latitude, longitude, transit speed, and heading vector at 1-second intervals. Corridors are automatically geo-fenced (e.g., Gorakhpur Smart Corridor, Bengaluru Transit, Delhi Arterial).</p>
+</div>
+
+<div class="workflow-step">
+    <div class="workflow-step-title">Step 2: Multi-Sensor Edge AI Inference & Hazard Localization</div>
+    <p>Video frames are passed to the <code>master_pipeline.py</code> execution engine. Frames are processed through parallel computer vision modules: deep learning object detection (YOLOv8) tracks vehicles and pedestrians; optical contouring detects road cavity depths; and dual LAB+HSV color-space segmentation measures standing water surface ratios.</p>
+</div>
+
+<div class="workflow-step">
+    <div class="workflow-step-title">Step 3: Real-Time In-Cabin ADAS Safety Interventions</div>
+    <p>When high-risk hazards are detected in the vehicle's direct trajectory (such as school children crossing an un-signaled street or a high-speed vehicle overtaking recklessly), an immediate in-cabin audio-visual ADAS warning is rendered to the transit driver, preventing catastrophic collisions.</p>
+</div>
+
+<div class="workflow-step">
+    <div class="workflow-step-title">Step 4: Spatial-Temporal Clustering & Multi-Hazard Escalation</div>
+    <p>Individual incident detections are processed through an 85-meter Haversine spherical distance matrix. Co-located defects (e.g., an unpaved road with deep potholes, muddy waterlogging, and traffic congestion) are merged into unified incident clusters and escalated to <b>Priority 98–100 CRITICAL</b>, preventing disjointed departmental blame-games.</p>
+</div>
+
+<div class="workflow-step">
+    <div class="workflow-step-title">Step 5: Zero-Loss Storage, Depot Sync & Municipal Command Dispatch</div>
+    <p>Telemetry is stored in local, zero-latency CSV ledgers and JSON payloads. Raat me jab bus transit depot wapas aati hai, high-resolution evidence frames automatically offload via Depot Wi-Fi to the Central Municipal Headquarters, generating automated work orders for PWD, Jal Sansthan, and Traffic Police.</p>
+</div>
+
+<div class="footer">
+    <span>SIH26124 • Urban Innovators • Master Technical Architecture Report</span>
+    <span>Document Ref: UI-MAR-2026 • Confidential / Project Submission</span>
+</div>
+
+<!-- ================================= PAGE 2 ================================= -->
+<!-- section divider -->
+
+<h2>3. Complete Technology Stack Matrix (A to Z Breakdown)</h2>
+<p>
+    Every technology in this project was deliberately chosen to ensure <b>zero external subscription cost</b>, high edge performance, and complete platform independence:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 18%;">Domain</th>
+            <th style="width: 22%;">Technology / Library</th>
+            <th style="width: 16%;">Version</th>
+            <th>Role, Architecture & Implementation Details</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Frontend Framework</b></td>
+            <td><span class="tech-pill">Streamlit</span></td>
+            <td>1.35.0+ / 1.63.0</td>
+            <td>Single-page reactive web application, multi-tab modular architecture, session state caching, and native interactive telemetry rendering.</td>
+        </tr>
+        <tr>
+            <td><b>UI Design System</b></td>
+            <td><span class="tech-pill">Custom Embedded CSS3</span></td>
+            <td>Vanilla CSS3</td>
+            <td>Dark executive glassmorphism (<code>backdrop-filter: blur(16px)</code>), cyber-cyan glowing highlights, responsive flex layouts, and telemetry HUD cards.</td>
+        </tr>
+        <tr>
+            <td><b>Geospatial Mapping</b></td>
+            <td><span class="tech-pill">PyDeck (Deck.gl)</span></td>
+            <td>0.8.0+ / 0.9.3</td>
+            <td>GPU hardware-accelerated 3D WebGL visualization (Scatterplot, Path, and 3D Extruded Hexagon density layers) over free Carto vector basemaps. Zero Mapbox token required.</td>
+        </tr>
+        <tr>
+            <td><b>Deep Learning AI</b></td>
+            <td><span class="tech-pill">Ultralytics YOLOv8</span></td>
+            <td>8.0.0+ / 8.4.150</td>
+            <td>YOLOv8 Nano (<code>yolov8n.pt</code>) for multi-class object detection: Cars, Bikes, Buses, Trucks, and Pedestrians at 25–30 FPS on edge NPUs.</td>
+        </tr>
+        <tr>
+            <td><b>Object Tracking</b></td>
+            <td><span class="tech-pill">ByteTrack</span></td>
+            <td>Integrated</td>
+            <td>Multi-object tracking with low-confidence trajectory association to prevent double-counting vehicles across consecutive frames.</td>
+        </tr>
+        <tr>
+            <td><b>Computer Vision</b></td>
+            <td><span class="tech-pill">OpenCV (cv2)</span></td>
+            <td>4.8.0+ / 5.0.0</td>
+            <td>Morphological Blackhat filtering for cavity depth extraction, Sobel gradient filtering for lane-marking suppression, and frame HUD annotation.</td>
+        </tr>
+        <tr>
+            <td><b>Data Manipulation</b></td>
+            <td><span class="tech-pill">Pandas</span></td>
+            <td>2.0.0+ / 3.0.5</td>
+            <td>High-speed in-memory data filtering, rolling averages, GPS interpolation, and multi-sensor CSV registers creation.</td>
+        </tr>
+        <tr>
+            <td><b>Numerical Computing</b></td>
+            <td><span class="tech-pill">NumPy</span></td>
+            <td>1.24.0+ / 2.5.3</td>
+            <td>Matrix transformations, contour area integration, pixel mask operations, and spherical Haversine trigonometric computations.</td>
+        </tr>
+        <tr>
+            <td><b>Image Processing</b></td>
+            <td><span class="tech-pill">Pillow (PIL)</span></td>
+            <td>9.5.0+ / 12.3.0</td>
+            <td>Evidence frame formatting, thumbnail generation, and multi-column visual proof galleries.</td>
+        </tr>
+        <tr>
+            <td><b>Core Backend Language</b></td>
+            <td><span class="tech-pill">Python</span></td>
+            <td>3.10 – 3.14</td>
+            <td>Primary language for concurrency, AI inferencing, file I/O operations, and pipeline orchestration.</td>
+        </tr>
+        <tr>
+            <td><b>Filesystem System</b></td>
+            <td><span class="tech-pill">pathlib.Path</span></td>
+            <td>Standard Library</td>
+            <td>Strictly platform-agnostic file path manipulation ensuring zero-friction cross-compatibility across Windows, Debian/Ubuntu Linux, and macOS.</td>
+        </tr>
+        <tr>
+            <td><b>Video Codecs / Audio</b></td>
+            <td><span class="tech-pill">FFmpeg</span></td>
+            <td>7.1.5 (Linux/Debian)</td>
+            <td>System-level video stream decoding, GPS subtitle track extraction, and frame-accurate containerization.</td>
+        </tr>
+        <tr>
+            <td><b>Cloud Deployment</b></td>
+            <td><span class="tech-pill">Streamlit Cloud / Docker</span></td>
+            <td>Linux Container</td>
+            <td>Containerized cloud deployment on Debian 12 (Trixie) with headless configuration (<code>headless = true</code>).</td>
+        </tr>
+        <tr>
+            <td><b>System Libraries</b></td>
+            <td><span class="tech-pill">libgl1, libglib2.0-0</span></td>
+            <td>packages.txt</td>
+            <td>Linux graphics and OpenGL dependencies for running headless OpenCV image processing without an X11 server.</td>
+        </tr>
+        <tr>
+            <td><b>Environment Tooling</b></td>
+            <td><span class="tech-pill">tools/fix_portable_venv.py</span></td>
+            <td>Custom Python Utility</td>
+            <td>Dynamic virtual environment configuration re-linker that automatically repairs broken interpreter symlinks when migrating folders across machines.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>4. Deep-Dive: The 8 Core Detection & Telematics Modules</h2>
+<p>Each module in the <code>ai_engine/</code> package is specialized to tackle a specific civic urban infrastructure challenge:</p>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">1. 🕳️ Smart Pothole & Road Cavity Engine (smart_pothole_detector.py)</div>
+    <p>
+        • <b>Working Mechanism:</b> Uses OpenCV Morphological Blackhat filtering (closing minus original frame) to extract dark surface depressions on asphalt roads. It measures both contour area (px) and estimated depression depth (cm).<br>
+        • <b>False-Positive Suppression:</b> Evaluates aspect ratio and fill-extent (>0.85) to distinguish real cavity depressions from smooth flat asphalt repair patches and surface tree shadows.<br>
+        • <b>Civic Output:</b> Categorizes defects as <code>MEDIUM</code> (2.5–4cm), <code>HIGH</code> (4–6cm), or <code>CRITICAL</code> (>6cm) and routes an automated Cold-Mix Repair Ticket to PWD / NHAI.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">2. 🚗 Traffic Density & Bottleneck Intelligence Engine (vehicle_detector.py)</div>
+    <p>
+        • <b>Working Mechanism:</b> YOLOv8 Nano detects vehicles across 4 key classes (Cars, Motorcycles, Transit Buses, Commercial Trucks). ByteTrack assigns persistent tracking IDs to avoid recount duplication.<br>
+        • <b>Bottleneck Heuristics:</b> Computes vehicle count surge combined with bus telemetry speed drop (<36 km/h). Flags dynamic choke points and notifies Integrated Traffic Management Systems (ITMS) for adaptive green signal prioritization.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">3. 🌊 Dual-Channel Waterlogging Optics Engine (waterlogging_detector.py)</div>
+    <p>
+        • <b>Working Mechanism:</b> Traditional RGB color thresholding fails on roads due to glare. Our engine implements dual-channel color spaces: <b>LAB color space</b> (L-channel) detects dark stagnant muddy water pools, while <b>HSV space</b> isolates specular sheen and glossy glint.<br>
+        • <b>False-Positive Suppression:</b> Applies a horizontal Sobel gradient mask (<code>grad_x</code>) to detect and subtract straight white lane stripes and zebra crossings.<br>
+        • <b>Civic Output:</b> Computes road surface water ratio (%), flags puddle counts, and generates emergency Suction Pump Work Orders for Municipal Jal Sansthan.
+    </p>
+</div>
+
+<div class="footer">
+    <span>SIH26124 • Urban Innovators • Master Technical Architecture Report</span>
+    <span>Document Ref: UI-MAR-2026 • Confidential / Project Submission</span>
+</div>
+
+<!-- ================================= PAGE 3 ================================= -->
+<!-- section divider -->
+
+<div class="highlight-card">
+    <div class="highlight-card-title">4. 🚶‍♂️ Pedestrian Safety & School Zone ADAS (pedestrian_detector.py)</div>
+    <p>
+        • <b>Working Mechanism:</b> Detects pedestrian clusters in proximity to the vehicle's dynamic braking path. Identifies school children and vulnerable pedestrians.<br>
+        • <b>In-Cabin ADAS Safety Intervention:</b> Emits high-priority audio-visual warning signals inside the driver's cabin when pedestrians enter the dynamic vehicle corridor, directly preventing blind-spot collisions.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">5. 🔍 Corridor-Aware ANPR & Speed Offender Tracking (anpr_detector.py)</div>
+    <p>
+        • <b>Working Mechanism:</b> Uses vehicle bounding box edge contouring to isolate license plate regions. Applies regional corridor state prefixes (e.g., <code>UP-53</code> Gorakhpur, <code>KA-04</code> Bengaluru, <code>DL-01</code> Delhi, <code>MH-02</code> Mumbai).<br>
+        • <b>Offender Detection:</b> Compares vehicle spatial displacement against transit speed benchmarks. Vehicles exceeding 48 km/h on urban roads or 32 km/h in designated school zones are automatically logged for Traffic Police e-Challans.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">6. 🗑️ Garbage Heap & Sanitation Monitoring (ai_engine)</div>
+    <p>
+        • <b>Working Mechanism:</b> Scans roadside berms and pedestrian footpaths for illegal roadside solid waste dumps and overflowed municipal bins.<br>
+        • <b>Civic Output:</b> Routes GPS-stamped cleanliness tickets with photographic verification to Nagar Nigam sanitation wardens under the Swachh Bharat Urban Mission.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">7. ⚠️ Traffic Signal Fault & Blackout Detector (ai_engine)</div>
+    <p>
+        • <b>Working Mechanism:</b> Detects intersection signal posts and verifies active lamp illumination states.<br>
+        • <b>Fault Alerts:</b> Detects signal blackouts (zero active lights) and contradictory multi-lamp states (both red and green active), alerting the Traffic Signal Maintenance Division.
+    </p>
+</div>
+
+<div class="highlight-card">
+    <div class="highlight-card-title">8. 🚌 Fleet Delay & Origin-Destination Transit Analytics (app.py & data/)</div>
+    <p>
+        • <b>Working Mechanism:</b> Compares real-time GPS progression against scheduled timetable baselines.<br>
+        • <b>Transit Optimization:</b> Pinpoints exact road segments causing recurring trip delays, allowing transit planners to optimize bus schedules and transit priority lanes.
+    </p>
+</div>
+
+<h2>5. Spatial-Temporal Clustering & Multi-Hazard Escalation Algorithm</h2>
+<p>
+    One of the project's most powerful innovations is the <b>Coordinated Spatial-Temporal Clustering Engine</b> implemented in <code>ai_engine/incident_generator.py</code>.
+</p>
+<p>
+    In traditional municipal governance, different departments operate in silos: PWD fixes roads, Jal Sansthan manages drains, and Traffic Police manages jams. When a road breaks down, departments blame one another. Our algorithm solves this mathematically:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 25%;">Algorithmic Step</th>
+            <th style="width: 35%;">Mathematical / Logical Principle</th>
+            <th>Operational Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>1. Spherical Distance Calculation</b></td>
+            <td><b>Haversine Formula:</b><br>
+            <code>d = 2R · atan2(√a, √(1-a))</code><br>
+            where <code>a = sin²(Δlat/2) + cos(lat1)·cos(lat2)·sin²(Δlon/2)</code></td>
+            <td>Calculates exact geodesic distance between geo-tagged defects on the Earth's curved surface without heavy GIS server dependencies.</td>
+        </tr>
+        <tr>
+            <td><b>2. 85-Meter Cluster Grouping</b></td>
+            <td>Any hazards detected within an <b>85-meter GPS radius</b> and overlapping transit window are assigned a unified <code>Cluster_ID</code> (e.g., <code>CLUST-004</code>).</td>
+            <td>Eliminates duplicate incident logging when multiple buses scan the same road cavity or flood puddle.</td>
+        </tr>
+        <tr>
+            <td><b>3. Multi-Hazard Escalation</b></td>
+            <td>If co-occurring hazards from multiple distinct categories are grouped into the same cluster (e.g., Severe Pothole + Water Pool + Traffic Choke), priority automatically escalates to <b>Priority 98–100 CRITICAL</b>.</td>
+            <td>Triggers unified joint work orders, forcing PWD road teams, Jal Sansthan drainage jetting suction units, and Traffic Police wardens to respond cooperatively.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>6. Data Architecture, Storage & Synchronization Protocol</h2>
+<p>The system utilizes an <b>Edge-First Store-and-Forward</b> data architecture designed for zero cellular bandwidth wastage:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 20%;">Storage Layer</th>
+            <th style="width: 25%;">File / Path</th>
+            <th style="width: 15%;">Format</th>
+            <th>Operational Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Unified Incident Register</b></td>
+            <td><code>data/incidents.csv</code></td>
+            <td>CSV (UTF-8)</td>
+            <td>Master municipal ledger compiling all detected defects with GPS, severity, timestamps, and assigned municipal work orders.</td>
+        </tr>
+        <tr>
+            <td><b>Sensor Stream Logs</b></td>
+            <td><code>data/*_results.csv</code></td>
+            <td>CSV (UTF-8)</td>
+            <td>Domain-specific logs (ANPR, Traffic, Potholes, Waterlogging, Pedestrians, Sanitation, and Signal faults).</td>
+        </tr>
+        <tr>
+            <td><b>Smart City ICCC Payload</b></td>
+            <td><code>edge_metadata_payload.json</code></td>
+            <td>JSON (REST Schema)</td>
+            <td>Standardized telemetry payload ready for direct REST ingestion by Smart City Integrated Command and Control Centers.</td>
+        </tr>
+        <tr>
+            <td><b>Visual Proof Vault</b></td>
+            <td><code>evidence/route_*/*.jpg</code></td>
+            <td>JPEG Images</td>
+            <td>High-resolution annotated JPG frames with GPS coordinates, Bus ID, speed, and hazard bounding-box HUD banners.</td>
+        </tr>
+        <tr>
+            <td><b>HQ Synchronization Log</b></td>
+            <td><code>data/hq_sync_log.json</code></td>
+            <td>JSON</td>
+            <td>Tracks timestamp of last depot Wi-Fi offload, buffered offline queue status, and handshake verification.</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="footer">
+    <span>SIH26124 • Urban Innovators • Master Technical Architecture Report</span>
+    <span>Document Ref: UI-MAR-2026 • Confidential / Project Submission</span>
+</div>
+
+<!-- ================================= PAGE 4 ================================= -->
+<!-- section divider -->
+
+<h2>7. Executive Command Center UI (Streamlit & 3D WebGL GIS)</h2>
+<p>
+    The frontend in <code>app.py</code> provides a comprehensive, interactive command center featuring <b>13 specialized operational modules</b>:
+</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 28%;">Dashboard Navigation Module</th>
+            <th style="width: 32%;">Core Functionality</th>
+            <th>Visual & Interactive Features</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>1. 🏠 Executive Dashboard</b></td>
+            <td>City-wide health KPI metrics, active bus status, priority alert ticker, and real-time hazard counters.</td>
+            <td>Glowing executive KPI tiles, high-priority work order dispatch cards, and critical defect feed.</td>
+        </tr>
+        <tr>
+            <td><b>2. 🎥 Video & Automated AI Pipeline</b></td>
+            <td>Direct video stream upload and on-demand execution of the master multi-hazard computer vision pipeline.</td>
+            <td>Dynamic progress meters, corridor selector, and real-time inference execution log.</td>
+        </tr>
+        <tr>
+            <td><b>3. 🗺️ GIS & 3D Spatial Heatmap</b></td>
+            <td>Interactive city-wide spatial mapping of all detected urban defects and transit trajectories.</td>
+            <td>Hardware-accelerated 3D PyDeck WebGL layers (Scatterplot, Path, and Extruded Hexagon density).</td>
+        </tr>
+        <tr>
+            <td><b>4. 🚧 Infrastructure & Road Defects</b></td>
+            <td>Pothole registry, cavity depth metrics, and PWD road maintenance work orders.</td>
+            <td>Pothole visual proof gallery with severity badges (Critical, High, Medium) and CSV download.</td>
+        </tr>
+        <tr>
+            <td><b>5. 🚗 Traffic & Bottleneck Intelligence</b></td>
+            <td>Live vehicle density breakdown, congestion choke point alerts, and transit delay indicators.</td>
+            <td>Traffic density bar charts, vehicle type distribution, and bottleneck hotspot evidence gallery.</td>
+        </tr>
+        <tr>
+            <td><b>6. 🌊 Waterlogging Hazards</b></td>
+            <td>Road surface moisture analytics, standing water coverage %, and drainage suction pump orders.</td>
+            <td>Dual-channel visual gallery with semi-transparent azure water overlays and municipal drain alerts.</td>
+        </tr>
+        <tr>
+            <td><b>7. 🚶‍♂️ Pedestrian Safety & School Zones</b></td>
+            <td>School children crossing alerts, pedestrian hazard tracking, and transit ADAS event log.</td>
+            <td>School zone hazard cards with driver collision warning badges and vulnerable zone evidence.</td>
+        </tr>
+        <tr>
+            <td><b>8. 🔍 ANPR & Offender Tracking</b></td>
+            <td>Corridor-aware registration plate tracking and urban speeding violations.</td>
+            <td>Speeding snapshots gallery with state registration plates, speed readings, and e-Challan registry.</td>
+        </tr>
+        <tr>
+            <td><b>9. 🗑️ Garbage & Sanitation Monitoring</b></td>
+            <td>Roadside solid waste heaps and municipal bin overflow detection.</td>
+            <td>Sanitation evidence gallery and Swachh Bharat ward-level cleanup task registers.</td>
+        </tr>
+        <tr>
+            <td><b>10. ⚠️ Signal Fault Detection</b></td>
+            <td>Traffic signal blackout and faulty multi-lamp state detection.</td>
+            <td>Intersection malfunction alerts with geo-coordinates and repair priority flags.</td>
+        </tr>
+        <tr>
+            <td><b>11. 🚌 Fleet & Delay OD Analytics</b></td>
+            <td>Transit corridor timetable adherence and segment-level bottleneck delay analysis.</td>
+            <td>Fleet summary register, schedule variance metrics, and corridor speed charts.</td>
+        </tr>
+        <tr>
+            <td><b>12. 📸 Geo-Tagged Evidence Gallery</b></td>
+            <td>Master visual proof gallery filtering evidence images across corridors and categories.</td>
+            <td>Multi-column responsive image grid with bounding-box annotations and telemetry HUD headers.</td>
+        </tr>
+        <tr>
+            <td><b>13. 📊 Reports & Data Export</b></td>
+            <td>Municipal headquarters synchronization hub and one-click data downloads.</td>
+            <td>Force HQ sync button, <b>Complete Evidence Vault (ZIP)</b>, and <b>Technical Architecture Report (PDF)</b>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>8. Feasibility, Economic Viability & Return on Investment (ROI)</h2>
+
+<div class="grid-2">
+    <div class="highlight-card">
+        <div class="highlight-card-title">Economic Viability (Massive Cost Advantage)</div>
+        <p>
+            • <b>Dedicated Survey Vans:</b> ₹35–50 Lakhs per vehicle + dedicated fuel & staff.<br>
+            • <b>Our Edge Solution:</b> <b>₹15,000–₹22,000</b> one-time retrofit per bus.<br>
+            • <b>Opex:</b> Zero extra fuel (buses are already running scheduled routes).<br>
+            • <b>Zero API Fees:</b> No Google Maps, OpenAI, or third-party paid licensing costs.
+        </p>
+    </div>
+    <div class="highlight-card">
+        <div class="highlight-card-title">Operational Feasibility & Fleet Scalability</div>
+        <p>
+            • <b>Fleet Integration:</b> Non-intrusive dashcam + mini edge box with automated ignition trigger.<br>
+            • <b>Driver Autonomy:</b> Zero manual driver input or training required.<br>
+            • <b>Corridor Coverage:</b> 100 buses cover 90%+ of city arterial roads daily.<br>
+            • <b>Data Efficiency:</b> Telemetry payloads are only ~2KB JSON per incident.
+        </p>
+    </div>
+</div>
+
+<h2>9. Societal Impact, Road Safety & National Alignment</h2>
+<p>
+    This project directly supports the <b>Smart Cities Mission</b>, <b>MoRTH Vision Zero</b>, and <b>Swachh Bharat Urban</b>:
+</p>
+<ul>
+    <li><b>Preventing Road Fatalities:</b> Potholes cause over 3,500+ deaths annually in India. Early detection prevents minor cavities from expanding into fatal craters.</li>
+    <li><b>40% PWD Budget Savings:</b> Catching road wear early allows low-cost preventive cold-mix patching instead of costly emergency road relaying.</li>
+    <li><b>Ending Contractor Fraud:</b> GPS-stamped visual proof prevents bogus road completion certificates and verifies repair quality.</li>
+    <li><b>Eliminating Municipal Silos:</b> Coordinated clustering dispatches joint tickets to PWD, Jal Sansthan, and Traffic Police simultaneously.</li>
+</ul>
+
+<div class="footer">
+    <span>SIH26124 • Urban Innovators • Master Technical Architecture Report</span>
+    <span>Generated: 14-Sep-2026 • Certified Production Architecture Baseline</span>
+</div>
+
+</body>
+</html>

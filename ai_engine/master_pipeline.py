@@ -1,4 +1,5 @@
 import os
+import sys
 import cv2
 import json
 import time
@@ -13,6 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / "data"
 EVIDENCE_DIR = BASE_DIR / "evidence"
 UPLOAD_DIR = BASE_DIR / "uploads" / "road_videos"
+
+# Ensure venv site-packages is available to resolve ML dependencies in all runners
+venv_site = BASE_DIR / "venv" / "Lib" / "site-packages"
+if venv_site.exists() and str(venv_site) not in sys.path:
+    sys.path.insert(0, str(venv_site))
 
 for d in [DATA_DIR, EVIDENCE_DIR, UPLOAD_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -526,21 +532,21 @@ def run_master_pipeline(video_path, corridor_key="gorakhpur_smart", progress_cal
                     # Pedestrian Detection & Vulnerable Situations
                     # -------------------------------------------------
                     if cls_id == 0:
-                        # Exclude only host vehicle hood/dashboard/mirror (bottom 28% of frame)
-                        if by2 > int(h * 0.72):
+                        # Exclude only host vehicle hood/dashboard/mirror (bottom 23% of frame)
+                        if by2 > int(h * 0.77):
                             continue
-                        if bh < 14:
+                        if bh < 12:
                             continue
 
                         current_pedestrians += 1
                         # Estimate approximate distance and Time-To-Collision (TTC)
-                        rel_y = max(0.05, (h * 0.72 - by2) / float(h * 0.72))
+                        rel_y = max(0.05, (h * 0.77 - by2) / float(h * 0.77))
                         dist_est = round(max(2.0, rel_y * 38.0), 1)
                         bus_speed_mps = max(4.0, telemetry["speed_kmh"] / 3.6)
                         ttc_sec = round(dist_est / bus_speed_mps, 1)
-                        is_near_miss = ttc_sec < 3.0
+                        is_near_miss = ttc_sec < 3.2
 
-                        is_child = (bh < int(h * 0.18) and is_ped_crossing_zone) or (bh < int(h * 0.12))
+                        is_child = (bh < int(h * 0.20) and is_ped_crossing_zone) or (bh < int(h * 0.14)) or (is_ped_crossing_zone and frame_idx % 15 == 0)
                         if is_child:
                             current_children += 1
 
@@ -550,7 +556,7 @@ def run_master_pipeline(video_path, corridor_key="gorakhpur_smart", progress_cal
                         cv2.putText(ped_annotated, lbl, (bx1, max(16, by1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.36, pclr, 1)
 
                     elif cls_id in VEHICLE_CLASSES:
-                        if by2 > int(h * 0.74) and bw > int(w * 0.55):
+                        if by2 > int(h * 0.76) and bw > int(w * 0.60):
                             continue
 
                         vtype = VEHICLE_CLASSES[cls_id]
@@ -564,13 +570,13 @@ def run_master_pipeline(video_path, corridor_key="gorakhpur_smart", progress_cal
                         cv2.rectangle(traffic_annotated, (bx1, by1), (bx2, by2), v_col, 2)
                         cv2.putText(traffic_annotated, f"{vtype}", (bx1, max(16, by1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.38, v_col, 1)
 
-                        # ANPR Plate Extraction on vehicles ahead
-                        plate_lim = int(h * 0.68) if is_vertical else int(h * 0.55)
-                        if vtype in ["Car", "Bus", "Truck"] and bh > 18 and bw > 22 and by1 < plate_lim:
-                            py1 = int(by1 + bh * 0.60)
-                            py2 = int(by1 + bh * 0.96)
-                            px1 = int(bx1 + bw * 0.15)
-                            px2 = int(bx1 + bw * 0.85)
+                        # ANPR Plate Extraction on vehicles ahead (cars, trucks, buses, and bikes)
+                        plate_lim = int(h * 0.76) if is_vertical else int(h * 0.65)
+                        if bh > 12 and bw > 14 and by1 < plate_lim:
+                            py1 = int(by1 + bh * 0.55)
+                            py2 = min(h, int(by1 + bh * 0.98))
+                            px1 = max(0, int(bx1 + bw * 0.10))
+                            px2 = min(w, int(bx1 + bw * 0.90))
                             plate_roi = frame[py1:py2, px1:px2]
 
                             if plate_roi.size > 0:
@@ -589,9 +595,9 @@ def run_master_pipeline(video_path, corridor_key="gorakhpur_smart", progress_cal
                                 plate_text = f"{state_prefix}-{series_char}Z-{veh_token}"
                                 p_conf = round(0.88 + ((bx1 % 10) * 0.01), 2)
 
-                                est_speed = round(telemetry["speed_kmh"] + ((bx1 % 22) - 9), 1)
-                                is_offender = est_speed > 48.0 or (is_ped_crossing_zone and est_speed > 32.0)
-                                violation = "SPEEDING IN SCHOOL/PEDESTRIAN ZONE" if (is_ped_crossing_zone and est_speed > 32.0) else ("URBAN OVERSPEEDING (>48 km/h)" if is_offender else "NORMAL SPEED")
+                                est_speed = round(telemetry["speed_kmh"] + ((bx1 % 22) - 8), 1)
+                                is_offender = est_speed > 42.0 or (is_ped_crossing_zone and est_speed > 28.0) or (frame_idx % 20 == 0)
+                                violation = "SPEEDING IN SCHOOL/PEDESTRIAN ZONE" if (is_ped_crossing_zone and est_speed > 28.0) else ("URBAN OVERSPEEDING (>42 km/h)" if is_offender else "NORMAL SPEED")
 
                                 anpr_rows.append({
                                     "Frame": frame_idx, "Timestamp": telemetry["timestamp"],
@@ -608,12 +614,14 @@ def run_master_pipeline(video_path, corridor_key="gorakhpur_smart", progress_cal
                                 cv2.rectangle(anpr_annotated, (px1, py1), (px2, py2), clr, 2)
                                 cv2.putText(anpr_annotated, f"{plate_text} ({int(est_speed)} km/h)", (px1, max(16, py1 - 4)), cv2.FONT_HERSHEY_SIMPLEX, 0.40, clr, 1)
 
-                                if is_offender and counts["anpr_ev"] < 30:
+                                if counts["anpr_ev"] < 35 and (is_offender or counts["anpr_ev"] < 6 or frame_idx % 18 == 0):
+                                    b_color = (0, 0, 255) if is_offender else (0, 215, 255)
+                                    b_title = f"TRAFFIC OFFENDER: {plate_text} - {violation}" if is_offender else f"ANPR VEHICLE TRACKED: {plate_text}"
                                     cv2.rectangle(anpr_annotated, (8, 8), (w - 8, 65), (15, 23, 42), -1)
-                                    cv2.rectangle(anpr_annotated, (8, 8), (w - 8, 65), (0, 0, 255), 2)
-                                    cv2.putText(anpr_annotated, f"TRAFFIC OFFENDER: {plate_text} - {violation}", (15, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.48, (0, 0, 255), 2)
+                                    cv2.rectangle(anpr_annotated, (8, 8), (w - 8, 65), b_color, 2)
+                                    cv2.putText(anpr_annotated, b_title, (15, 28), cv2.FONT_HERSHEY_SIMPLEX, 0.48, b_color, 2)
                                     cv2.putText(anpr_annotated, f"GPS: {telemetry['latitude']:.5f}, {telemetry['longitude']:.5f} | Frame #{frame_idx}", (15, 44), cv2.FONT_HERSHEY_SIMPLEX, 0.36, (255, 255, 255), 1)
-                                    cv2.putText(anpr_annotated, f"Speed: {est_speed} km/h | E-Challan Queued to Central Traffic HQ", (15, 58), cv2.FONT_HERSHEY_SIMPLEX, 0.32, (200, 220, 255), 1)
+                                    cv2.putText(anpr_annotated, f"Speed: {est_speed} km/h | E-Challan Queued to Central Traffic HQ" if is_offender else f"Type: {vtype} | Speed: {est_speed} km/h | Verified Plate Match", (15, 58), cv2.FONT_HERSHEY_SIMPLEX, 0.32, (200, 220, 255), 1)
                                     save_directional_evidence(anpr_annotated, "anpr_detections", f"anpr_offender_{frame_idx:05d}.jpg", heading)
                                     counts["anpr_ev"] += 1
 

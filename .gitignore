@@ -24,13 +24,6 @@ ai_engine/*.pt
 # Generated live frame
 data/live_frame.jpg
 
-# Generated evidence
-evidence/traffic_detections/
-evidence/edge_snapshots/
-evidence/anpr_detections/
-evidence/all_detections/
-evidence/smart_detections/
-
 # Temporary / generated files
 *.tmp
 *.log

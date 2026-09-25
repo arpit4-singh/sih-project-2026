@@ -30,6 +30,11 @@ AI_DIR = BASE_DIR / "ai_engine"
 for d in [DATA_DIR, EVIDENCE_DIR, UPLOAD_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
+# Fallback to local venv site-packages if running from standard Python
+venv_site = BASE_DIR / "venv" / "Lib" / "site-packages"
+if venv_site.exists() and str(venv_site) not in sys.path:
+    sys.path.insert(0, str(venv_site))
+
 if str(AI_DIR) not in sys.path:
     sys.path.append(str(AI_DIR))
 
@@ -1218,14 +1223,16 @@ elif navigation == "📊 Reports & Data Export":
         )
 
     with col_btn3:
-        pdf_report_path = BASE_DIR / "SIH26124_Urban_Intelligence_Architecture_Report.pdf"
+        master_pdf = BASE_DIR / "SIH26124_Urban_Intelligence_Final_Master_Report.pdf"
+        fallback_pdf = BASE_DIR / "SIH26124_Urban_Intelligence_Architecture_Report.pdf"
+        pdf_report_path = master_pdf if master_pdf.exists() else fallback_pdf
         if pdf_report_path.exists():
             with open(pdf_report_path, "rb") as pf:
                 pdf_bytes = pf.read()
             st.download_button(
-                label="📄 Download Technical Report (PDF)",
+                label="📄 Download Master Architecture Report (PDF)",
                 data=pdf_bytes,
-                file_name="SIH26124_Urban_Intelligence_Architecture_Report.pdf",
+                file_name="SIH26124_Urban_Intelligence_Final_Master_Report.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
